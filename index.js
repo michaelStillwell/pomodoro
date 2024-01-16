@@ -87,7 +87,6 @@ class Timer {
 		const diff = this.sec - this.interval; 
 		if (diff == 0) {
 			this.setSec(0);
-			this.setMin(Number(this.min) - 1);
 		} else if (diff <= 0) {
 			this.setSec(diff + 60);
 			this.setMin(Number(this.min) - 1);
