@@ -1,0 +1,7 @@
+#timer h3 b:after {
+	content: attr(data-time)
+}
+
+#rounds:after {
+	content: attr(data-rounds);
+}

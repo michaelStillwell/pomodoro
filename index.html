@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title></title>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link href="styles.css" rel="stylesheet">
+		<style>
+		</style>
+	</head>
+	<body>
+		<h1>Pomodoro</h1>
+
+		<div id="timer">
+			<h3>
+				Work:
+				<button id="work-inc">+</button>
+				<b id="work-minute" data-time="00"></b>
+				<b>:</b>
+				<b id="work-second" data-time="24"></b>
+				<button id="work-dec">-</button>
+			</h3>
+
+			<h3>
+				Rest:
+				<button id="rest-inc">+</button>
+				<b id="rest-minute" data-time="00"></b>
+				<b>:</b>
+				<b id="rest-second" data-time="24"></b>
+				<button id="rest-dec">-</button>
+			</h3>
+
+			<button id="start">Start</button>
+			<span id="rounds" data-rounds="0"></span>
+			<button id="cancel" disabled>Cancel</button>
+		</div>
+
+		<script src="index.js"></script>
+	</body>
+</html>
