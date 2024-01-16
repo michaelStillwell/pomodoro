@@ -10,7 +10,7 @@
 		<h1>Pomodoro</h1>
 
 		<div id="timer">
-			<h3>
+			<h3 id="work" class="active">
 				Work:
 				<button id="work-inc">+</button>
 				<b id="work-minute" data-time="00"></b>
@@ -19,7 +19,7 @@
 				<button id="work-dec">-</button>
 			</h3>
 
-			<h3>
+			<h3 id="rest">
 				Rest:
 				<button id="rest-inc">+</button>
 				<b id="rest-minute" data-time="00"></b>
@@ -27,10 +27,18 @@
 				<b id="rest-second" data-time="00"></b>
 				<button id="rest-dec">-</button>
 			</h3>
+		</div>
 
+		<div>
 			<button id="start">Start</button>
 			<span id="rounds" data-rounds="0"></span>
 			<button id="cancel" disabled>Cancel</button>
+		</div>
+
+		<div>
+			<label for="autoplay">Autoplay</label>
+			<input id="autoplay" type="checkbox">
+			<input id="interval" type="number" min="0" max="60">
 		</div>
 
 		<script src="index.js"></script>

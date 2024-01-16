@@ -5,3 +5,7 @@
 #rounds:after {
 	content: attr(data-rounds);
 }
+
+.active {
+	background: green;
+}

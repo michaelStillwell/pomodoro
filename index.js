@@ -14,17 +14,26 @@ class Timer {
 		return this.timer == null;
 	}
 
-	setMin(val) {
+	setInterval(interval) {
+		this.interval = interval;
+	}
+
+	setInit(min, sec) {
+		this.initMin = min;
+		this.initSec = sec;
+	}
+
+	setMin(val, man) {
 		this.min = Number(val) || 0;
 		if (this.cb) {
-			this.cb(this.min, this.sec);
+			this.cb(this.min, this.sec, man);
 		}
 	}
 
-	setSec(val) {
+	setSec(val, man) {
 		this.sec = Number(val) || 0;
 		if (this.cb) {
-			this.cb(this.min, this.sec);
+			this.cb(this.min, this.sec, man);
 		}
 	}
 
@@ -61,37 +70,39 @@ class Timer {
 	}
 
 	increment() {
+		console.log(this.interval)
 		if (this.timer != null) {
 			return;
 		}
 
 		if (this.sec + this.interval >= 60) {
-			this.setSec(this.sec + this.interval - 60);
-			this.setMin(Number(this.min) + 1);
+			this.setSec(this.sec + this.interval - 60, true);
+			this.setMin(Number(this.min) + 1, true);
 		} else {
-			this.setSec(Number(this.sec) + this.interval);
+			this.setSec(Number(this.sec) + this.interval, true);
 		}
 	}
 
 	decrement() {
+		console.log(this.interval)
 		if (this.timer != null) {
 			return;
 		}
 
 		if (this.min <= 0 && this.sec - this.interval <= 0) {
-			this.setMin(0);
-			this.setSec(0);
+			this.setMin(0, true);
+			this.setSec(0, true);
 			return;
 		}
 
 		const diff = this.sec - this.interval; 
 		if (diff == 0) {
-			this.setSec(0);
+			this.setSec(0, true);
 		} else if (diff <= 0) {
-			this.setSec(diff + 60);
-			this.setMin(Number(this.min) - 1);
+			this.setSec(diff + 60, true);
+			this.setMin(Number(this.min) - 1, true);
 		} else {
-			this.setSec(Number(this.sec) - this.interval);
+			this.setSec(Number(this.sec) - this.interval, true);
 		}
 
 		if (this.minVal <= 0) {
@@ -125,13 +136,17 @@ class Timer {
 
 	const start = document.getElementById('start');
 	const cancel = document.getElementById('cancel');
+	const autoplay = document.getElementById('autoplay');
+	const interval = document.getElementById('interval');
 
+	const workDiv = document.getElementById('work');
 	const workMin = document.getElementById('work-minute');
 	const workSec = document.getElementById('work-second');
 	const workInc = document.getElementById('work-inc');
 	const workDec = document.getElementById('work-dec');
 	let work = createWork();
 
+	const restDiv = document.getElementById('rest');
 	const restMin = document.getElementById('rest-minute');
 	const restSec = document.getElementById('rest-second');
 	const restInc = document.getElementById('rest-inc');
@@ -144,6 +159,7 @@ class Timer {
 			workSec.getAttribute('data-time'),
 			updateWork,
 			ended,
+			Number(interval.value),
 		);
 	}
 
@@ -153,6 +169,7 @@ class Timer {
 			restSec.getAttribute('data-time'),
 			updateRest,
 			ended,
+			Number(interval.value),
 		);
 	}
 
@@ -167,25 +184,33 @@ class Timer {
 		start.disabled = true;
 		cancel.disabled = false;
 
-		work = createWork();
-		rest = createRest();
+		work.setInit(workMin.getAttribute('data-time'), workSec.getAttribute('data-time'));
+		rest.setInit(restMin.getAttribute('data-time'), restSec.getAttribute('data-time'));
 
 		rounds = 1;
 		document.getElementById('rounds').setAttribute('data-rounds', rounds);
 		running = true;
 
-		work.start();
+		if (working) {
+			work.start();
+		} else {
+			rest.start();
+		}
 	});
 
 	cancel.addEventListener('click', function() {
 		start.disabled = false;
 		cancel.disabled = true;
 
-		working = true;
 		running = false;
 
 		work.stop();
 		rest.stop();
+	});
+
+	interval.addEventListener('change', function(e) {
+		work.setInterval(Number(e.target.value));
+		rest.setInterval(Number(e.target.value));
 	});
 
 	workInc.addEventListener('click', function() {
@@ -204,38 +229,58 @@ class Timer {
 		rest.decrement();
 	});
 
-	function updateWork(min, sec) {
+	function updateWork(min, sec, man) {
 		workMin.setAttribute('data-time', format(min));
 		workSec.setAttribute('data-time', format(sec));
-		setLocal(
-			[min, sec], 
-			[restMin.getAttribute('data-time'), restSec.getAttribute('data-time')],
-		);
+		if (man) {
+			setLocal(
+				[min, sec], 
+				[restMin.getAttribute('data-time'), restSec.getAttribute('data-time')],
+			);
+		}
 	}
 
-	function updateRest(min, sec) {
+	function updateRest(min, sec, man) {
 		restMin.setAttribute('data-time', format(min));
 		restSec.setAttribute('data-time', format(sec));
-		setLocal(
-			[workMin.getAttribute('data-time'), workSec.getAttribute('data-time')],
-			[min, sec], 
-		);
+		if (man) {
+			setLocal(
+				[workMin.getAttribute('data-time'), workSec.getAttribute('data-time')],
+				[min, sec], 
+			);
+		}
 	}
 
 	function ended() {
-		if (!running) {
-			return;
-		}
+		if (autoplay.checked) {
+			if (!running) {
+				return;
+			}
 
-		if (working) {
-			rest.start();
+			if (working) {
+				rest.start();
+			} else {
+				work.start();
+				rounds += 1;
+				document.getElementById('rounds').setAttribute('data-rounds', rounds);
+			}
 		} else {
-			work.start();
-			rounds += 1;
-			document.getElementById('rounds').setAttribute('data-rounds', rounds);
+			start.disabled = !start.disabled;
+			cancel.disabled = !cancel.disabled;
 		}
 
-		working = !working;
+		toggleWorking();
+	}
+
+	function toggleWorking(val = null) {
+		working = val || !working;
+		if (working) {
+			workDiv.classList.add('active');
+			restDiv.classList.remove('active');
+		} else {
+			workDiv.classList.remove('active');
+			restDiv.classList.add('active');
+		}
 	}
 
 	function format(num) {
