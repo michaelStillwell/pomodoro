@@ -33,6 +33,7 @@
 			<button id="start">Start</button>
 			<span id="rounds" data-rounds="0"></span>
 			<button id="cancel" disabled>Cancel</button>
+			<button id="mute" disabled>Mute</button>
 		</div>
 
 		<div>
@@ -41,6 +42,9 @@
 			<input id="interval" type="number" min="0" max="60">
 		</div>
 
+		<audio id="notification">
+			<source src="notification.wav" type="audio/wav">
+		</audio>
 		<script src="index.js"></script>
 	</body>
 </html>

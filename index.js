@@ -136,8 +136,10 @@ class Timer {
 
 	const start = document.getElementById('start');
 	const cancel = document.getElementById('cancel');
+	const mute = document.getElementById('mute');
 	const autoplay = document.getElementById('autoplay');
 	const interval = document.getElementById('interval');
+	const notification = document.getElementById('notification');
 
 	const workDiv = document.getElementById('work');
 	const workMin = document.getElementById('work-minute');
@@ -183,6 +185,7 @@ class Timer {
 	start.addEventListener('click', function() {
 		start.disabled = true;
 		cancel.disabled = false;
+		mute.disabled = false;
 
 		work.setInit(workMin.getAttribute('data-time'), workSec.getAttribute('data-time'));
 		rest.setInit(restMin.getAttribute('data-time'), restSec.getAttribute('data-time'));
@@ -201,11 +204,17 @@ class Timer {
 	cancel.addEventListener('click', function() {
 		start.disabled = false;
 		cancel.disabled = true;
+		mute.disabled = true;
 
 		running = false;
 
 		work.stop();
 		rest.stop();
+		notification.pause();
+	});
+
+	mute.addEventListener('click', function() {
+		notification.pause();
 	});
 
 	interval.addEventListener('change', function(e) {
@@ -252,6 +261,7 @@ class Timer {
 	}
 
 	function ended() {
+		notification.play();
 		if (autoplay.checked) {
 			if (!running) {
 				return;
@@ -265,8 +275,13 @@ class Timer {
 				document.getElementById('rounds').setAttribute('data-rounds', rounds);
 			}
 		} else {
+			notification.loop = true;
+			confirm(`${working ? 'Work' : 'Rest'} timer ended.`);
+			notification.pause();
+
 			start.disabled = !start.disabled;
 			cancel.disabled = !cancel.disabled;
+			mute.disabled = !mute.disabled;
 		}
 
 		toggleWorking();
