@@ -43,7 +43,7 @@ class Timer {
 
 		const self = this;
 		this.timer = setInterval(function() {
-			if (self.min == 0 && self.sec == 0 ) {
+			if (self.min == 0 && self.sec == 0) {
 				return self.stop();
 			}
 
@@ -95,7 +95,7 @@ class Timer {
 			return;
 		}
 
-		const diff = this.sec - this.interval; 
+		const diff = this.sec - this.interval;
 		if (diff == 0) {
 			this.setSec(0, true);
 		} else if (diff <= 0) {
@@ -234,7 +234,7 @@ class Timer {
 		workSec.setAttribute('data-time', format(sec));
 		if (man) {
 			setLocal(
-				[min, sec], 
+				[min, sec],
 				[restMin.getAttribute('data-time'), restSec.getAttribute('data-time')],
 			);
 		}
@@ -246,7 +246,7 @@ class Timer {
 		if (man) {
 			setLocal(
 				[workMin.getAttribute('data-time'), workSec.getAttribute('data-time')],
-				[min, sec], 
+				[min, sec],
 			);
 		}
 	}
