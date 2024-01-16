@@ -10,18 +10,18 @@ class Timer {
 		this.ended = ended;
 	}
 
-get running() {
+	get running() {
 		return this.timer == null;
 	}
 
-setMin(val) {
+	setMin(val) {
 		this.min = Number(val) || 0;
 		if (this.cb) {
 			this.cb(this.min, this.sec);
 		}
 	}
 
-setSec(val) {
+	setSec(val) {
 		this.sec = Number(val) || 0;
 		if (this.cb) {
 			this.cb(this.min, this.sec);
@@ -61,7 +61,7 @@ setSec(val) {
 		}
 	}
 
-increment() {
+	increment() {
 		if (this.timer != null) {
 			return;
 		}
@@ -74,7 +74,7 @@ increment() {
 		}
 	}
 
-decrement() {
+	decrement() {
 		if (this.timer != null) {
 			return;
 		}
@@ -98,113 +98,132 @@ decrement() {
 	}
 }
 
-console.log("loaded");
+(function() {
+	try {
+		const timer = JSON.parse(localStorage.getItem('timer') || '{}');
 
-let running = false;
-let working = true;
-let rounds = 0;
+		const [wkMin, wkSec] = timer.work.split(':');
+		const [rtMin, rtSec] = timer.rest.split(':');
 
-const start = document.getElementById('start');
-const cancel = document.getElementById('cancel');
+		document.getElementById('work-minute').setAttribute('data-time', format(Number(wkMin)));
+		document.getElementById('work-second').setAttribute('data-time', format(Number(wkSec)));
+		document.getElementById('rest-minute').setAttribute('data-time', format(Number(rtMin)));
+		document.getElementById('rest-second').setAttribute('data-time', format(Number(rtSec)));
+	} catch { }
 
-const workMin = document.getElementById('work-minute');
-const workSec = document.getElementById('work-second');
-const workInc = document.getElementById('work-inc');
-const workDec = document.getElementById('work-dec');
-let work = createWork();
+	console.log("loaded");
 
-const restMin = document.getElementById('rest-minute');
-const restSec = document.getElementById('rest-second');
-const restInc = document.getElementById('rest-inc');
-const restDec = document.getElementById('rest-dec');
-let rest = createRest();
+	let running = false;
+	let working = true;
+	let rounds = 0;
 
-function createWork() {
-	return new Timer(
-		workMin.getAttribute('data-time'),
-		workSec.getAttribute('data-time'),
-		updateWork,
-		ended,
-	);
-}
+	const start = document.getElementById('start');
+	const cancel = document.getElementById('cancel');
 
-function createRest() {
-	return new Timer(
-		restMin.getAttribute('data-time'),
-		restSec.getAttribute('data-time'),
-		updateRest,
-		ended,
-	);
-}
+	const workMin = document.getElementById('work-minute');
+	const workSec = document.getElementById('work-second');
+	const workInc = document.getElementById('work-inc');
+	const workDec = document.getElementById('work-dec');
+	let work = createWork();
 
-workMin.disabled = true;
-start.addEventListener('click', function() {
-	start.disabled = true;
-	cancel.disabled = false;
+	const restMin = document.getElementById('rest-minute');
+	const restSec = document.getElementById('rest-second');
+	const restInc = document.getElementById('rest-inc');
+	const restDec = document.getElementById('rest-dec');
+	let rest = createRest();
 
-	work = createWork();
-	rest = createRest();
-
-	rounds = 1;
-	document.getElementById('rounds').setAttribute('data-rounds', rounds);
-	running = true;
-
-	work.start();
-});
-
-cancel.addEventListener('click', function() {
-	start.disabled = false;
-	cancel.disabled = true;
-
-	working = true;
-	running = false;
-
-	work.stop();
-	rest.stop();
-});
-
-workInc.addEventListener('click', function() {
-	work.increment();
-});
-
-workDec.addEventListener('click', function() {
-	work.decrement();
-});
-
-restInc.addEventListener('click', function() {
-	rest.increment();
-});
-
-restDec.addEventListener('click', function() {
-	rest.decrement();
-});
-
-function updateWork(min, sec) {
-	workMin.setAttribute('data-time', format(min));
-	workSec.setAttribute('data-time', format(sec));
-}
-
-function updateRest(min, sec) {
-	restMin.setAttribute('data-time', format(min));
-	restSec.setAttribute('data-time', format(sec));
-}
-
-function ended() {
-if (!running) {
-		return;
+	function createWork() {
+		return new Timer(
+			workMin.getAttribute('data-time'),
+			workSec.getAttribute('data-time'),
+			updateWork,
+			ended,
+		);
 	}
 
-	if (working) {
-		rest.start();
-	} else {
-		work.start();
-		rounds += 1;
+	function createRest() {
+		return new Timer(
+			restMin.getAttribute('data-time'),
+			restSec.getAttribute('data-time'),
+			updateRest,
+			ended,
+		);
+	}
+
+
+	start.addEventListener('click', function() {
+		start.disabled = true;
+		cancel.disabled = false;
+
+		work = createWork();
+		rest = createRest();
+
+		rounds = 1;
 		document.getElementById('rounds').setAttribute('data-rounds', rounds);
+		running = true;
+
+		localStorage.setItem('timer', JSON.stringify({
+			work: `${workMin.getAttribute('data-time')}:${workSec.getAttribute('data-time')}`,
+			rest: `${restMin.getAttribute('data-time')}:${restSec.getAttribute('data-time')}`,
+		}));
+
+		work.start();
+	});
+
+	cancel.addEventListener('click', function() {
+		start.disabled = false;
+		cancel.disabled = true;
+
+		working = true;
+		running = false;
+
+		work.stop();
+		rest.stop();
+	});
+
+	workInc.addEventListener('click', function() {
+		work.increment();
+	});
+
+	workDec.addEventListener('click', function() {
+		work.decrement();
+	});
+
+	restInc.addEventListener('click', function() {
+		rest.increment();
+	});
+
+	restDec.addEventListener('click', function() {
+		rest.decrement();
+	});
+
+	function updateWork(min, sec) {
+		workMin.setAttribute('data-time', format(min));
+		workSec.setAttribute('data-time', format(sec));
 	}
 
-	working = !working;
-}
+	function updateRest(min, sec) {
+		restMin.setAttribute('data-time', format(min));
+		restSec.setAttribute('data-time', format(sec));
+	}
 
-function format(num) {
-	return '00'.slice(num.toString().length) + num;
-}
+	function ended() {
+		if (!running) {
+			return;
+		}
+
+		if (working) {
+			rest.start();
+		} else {
+			work.start();
+			rounds += 1;
+			document.getElementById('rounds').setAttribute('data-rounds', rounds);
+		}
+
+		working = !working;
+	}
+
+	function format(num) {
+		return '00'.slice(num.toString().length) + num;
+	}
+})()
