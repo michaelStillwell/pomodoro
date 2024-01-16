@@ -102,8 +102,12 @@ class Timer {
 
 (function() {
 	try {
-		const timer = JSON.parse(localStorage.getItem('timer') || '{}');
+		const timerStr = localStorage.getItem('timer');
+		if (!timerStr) {
+			setLocal([0, 0], [0, 0]);
+		}
 
+		const timer = JSON.parse(localStorage.getItem('timer'));
 		const [wkMin, wkSec] = timer.work.split(':');
 		const [rtMin, rtSec] = timer.rest.split(':');
 
@@ -152,6 +156,12 @@ class Timer {
 		);
 	}
 
+	function setLocal(work, rest) {
+		localStorage.setItem('timer', JSON.stringify({
+			work: work.join(':'),
+			rest: rest.join(':'),
+		}));
+	}
 
 	start.addEventListener('click', function() {
 		start.disabled = true;
@@ -163,11 +173,6 @@ class Timer {
 		rounds = 1;
 		document.getElementById('rounds').setAttribute('data-rounds', rounds);
 		running = true;
-
-		localStorage.setItem('timer', JSON.stringify({
-			work: `${workMin.getAttribute('data-time')}:${workSec.getAttribute('data-time')}`,
-			rest: `${restMin.getAttribute('data-time')}:${restSec.getAttribute('data-time')}`,
-		}));
 
 		work.start();
 	});
@@ -202,11 +207,19 @@ class Timer {
 	function updateWork(min, sec) {
 		workMin.setAttribute('data-time', format(min));
 		workSec.setAttribute('data-time', format(sec));
+		setLocal(
+			[min, sec], 
+			[restMin.getAttribute('data-time'), restSec.getAttribute('data-time')],
+		);
 	}
 
 	function updateRest(min, sec) {
 		restMin.setAttribute('data-time', format(min));
 		restSec.setAttribute('data-time', format(sec));
+		setLocal(
+			[workMin.getAttribute('data-time'), workSec.getAttribute('data-time')],
+			[min, sec], 
+		);
 	}
 
 	function ended() {
