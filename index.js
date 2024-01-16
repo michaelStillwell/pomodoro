@@ -28,7 +28,6 @@ class Timer {
 		}
 	}
 
-
 	start() {
 		this.initMin = this.min;
 		this.initSec = this.sec;
