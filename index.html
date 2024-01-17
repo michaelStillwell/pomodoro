@@ -9,37 +9,46 @@
 	<body>
 		<h1>Pomodoro</h1>
 
-		<div id="timer">
-			<h3 id="work" class="active">
-				Work:
-				<button id="work-inc">+</button>
-				<b id="work-minute" data-time="00"></b>
-				<b>:</b>
-				<b id="work-second" data-time="00"></b>
-				<button id="work-dec">-</button>
-			</h3>
+		<div class="container">
+			<div id="timer">
+				<div id="work" class="section active">
+					<h3 id="work-label">Work:</h3>
+					<button id="work-inc">+</button>
+					<b id="work-minute" data-time="00"></b>
+					<b>:</b>
+					<b id="work-second" data-time="00"></b>
+					<button id="work-dec">-</button>
+				</div>
 
-			<h3 id="rest">
-				Rest:
-				<button id="rest-inc">+</button>
-				<b id="rest-minute" data-time="00"></b>
-				<b>:</b>
-				<b id="rest-second" data-time="00"></b>
-				<button id="rest-dec">-</button>
-			</h3>
-		</div>
+				<div id="rest" class="section">
+					<h3 id="rest-label">Rest:</h3>
+					<button id="rest-inc">+</button>
+					<b id="rest-minute" data-time="00"></b>
+					<b>:</b>
+					<b id="rest-second" data-time="00"></b>
+					<button id="rest-dec">-</button>
+				</div>
+			</div>
 
-		<div>
-			<button id="start">Start</button>
-			<span id="rounds" data-rounds="0"></span>
-			<button id="cancel" disabled>Cancel</button>
-			<button id="mute" disabled>Mute</button>
-		</div>
+			<div>
+				<button id="start">Start</button>
+				<button id="mute" disabled>Mute</button>
+				<button id="cancel" disabled>Cancel</button>
+			</div>
 
-		<div>
-			<label for="autoplay">Autoplay</label>
-			<input id="autoplay" type="checkbox">
-			<input id="interval" type="number" min="0" max="60">
+			<div>
+				<input id="autoplay" type="checkbox"/>
+				<label id="autoplay-label" for="autoplay">Autoplay</label>
+				<input 
+					id="interval"
+					type="number"
+					ondrop="return false"
+					onpaste="return false"
+					onkeypress="return event.keyCode >= 48 && event.keyCode <= 57 && event.target.value.length < 2"
+					min="0" 
+					max="60" 
+					placeholder="Int" />
+			</div>
 		</div>
 
 		<audio id="notification">

@@ -132,7 +132,6 @@ class Timer {
 
 	let running = false;
 	let working = true;
-	let rounds = 0;
 
 	const start = document.getElementById('start');
 	const cancel = document.getElementById('cancel');
@@ -142,6 +141,7 @@ class Timer {
 	const notification = document.getElementById('notification');
 
 	const workDiv = document.getElementById('work');
+	const workLab = document.getElementById('work-label');
 	const workMin = document.getElementById('work-minute');
 	const workSec = document.getElementById('work-second');
 	const workInc = document.getElementById('work-inc');
@@ -149,6 +149,7 @@ class Timer {
 	let work = createWork();
 
 	const restDiv = document.getElementById('rest');
+	const restLab = document.getElementById('rest-label');
 	const restMin = document.getElementById('rest-minute');
 	const restSec = document.getElementById('rest-second');
 	const restInc = document.getElementById('rest-inc');
@@ -185,13 +186,10 @@ class Timer {
 	start.addEventListener('click', function() {
 		start.disabled = true;
 		cancel.disabled = false;
-		mute.disabled = false;
 
 		work.setInit(workMin.getAttribute('data-time'), workSec.getAttribute('data-time'));
 		rest.setInit(restMin.getAttribute('data-time'), restSec.getAttribute('data-time'));
 
-		rounds = 1;
-		document.getElementById('rounds').setAttribute('data-rounds', rounds);
 		running = true;
 
 		if (working) {
@@ -204,13 +202,11 @@ class Timer {
 	cancel.addEventListener('click', function() {
 		start.disabled = false;
 		cancel.disabled = true;
-		mute.disabled = true;
 
 		running = false;
 
 		work.stop();
 		rest.stop();
-		notification.pause();
 	});
 
 	mute.addEventListener('click', function() {
@@ -222,12 +218,24 @@ class Timer {
 		rest.setInterval(Number(e.target.value));
 	});
 
+	workLab.addEventListener('click', function() {
+		working = true;
+		workDiv.classList.add('active');
+		restDiv.classList.remove('active');
+	});
+
 	workInc.addEventListener('click', function() {
 		work.increment();
 	});
 
 	workDec.addEventListener('click', function() {
 		work.decrement();
+	});
+
+	restLab.addEventListener('click', function() {
+		working = false;
+		workDiv.classList.remove('active');
+		restDiv.classList.add('active');
 	});
 
 	restInc.addEventListener('click', function() {
@@ -261,6 +269,8 @@ class Timer {
 	}
 
 	function ended() {
+		console.log('')
+		mute.disabled = false;
 		notification.play();
 		if (autoplay.checked) {
 			if (!running) {
@@ -271,8 +281,6 @@ class Timer {
 				rest.start();
 			} else {
 				work.start();
-				rounds += 1;
-				document.getElementById('rounds').setAttribute('data-rounds', rounds);
 			}
 		} else {
 			notification.loop = true;
@@ -281,9 +289,9 @@ class Timer {
 
 			start.disabled = !start.disabled;
 			cancel.disabled = !cancel.disabled;
-			mute.disabled = !mute.disabled;
 		}
 
+		mute.disabled = true;
 		toggleWorking();
 	}
 

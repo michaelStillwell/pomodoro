@@ -1,4 +1,85 @@
-#timer h3 b:after {
+@font-face {
+  font-family: "Komikax";
+  src: url(./KOMIKAX_.ttf) format("truetype");
+}
+
+* {
+	font-family: Komikax;
+	color: hsl(0, 7%, 77%);
+	text-shadow: black 1px 1px 5px;
+	font-size: 16px;
+}
+
+h1 {
+	font-size: 3rem;
+	padding-left: 3rem;
+}
+
+h3, b {
+	font-size: 1.5rem;
+}
+
+button, input {
+	background: none;
+	border: none;
+	outline: none;
+	margin: 0 1rem;
+	--moz-appearance: textfield;
+	--webkit-appearance: none;
+    appearance: textfield;
+}
+
+button {
+	cursor: pointer;
+}
+
+button:hover {
+	color: lightgray;
+}
+
+button:disabled {
+	color: hsl(0, 0%, 55%);
+	cursor: not-allowed;
+}
+
+#autoplay:checked + #autoplay-label {
+	color: green;
+}
+
+#autoplay-label {
+	cursor: pointer;
+}
+
+#autoplay {
+	position: absolute;
+	visibility: hidden;
+}
+
+#interval {
+	border-bottom: 1px solid white;
+	padding: 0.25rem 0.5rem;
+	width: 1.75rem;
+	font-size: 1rem;
+	text-align: center;
+}
+
+body {
+	background: hsl(264, 29%, 21%);
+}
+
+.container {
+	display: flex;
+	flex-direction: column;
+}
+
+.container > div {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+}
+
+#timer b:after {
 	content: attr(data-time)
 }
 
@@ -6,6 +87,30 @@
 	content: attr(data-rounds);
 }
 
-.active {
-	background: green;
+.active h3 {
+	color: green;
 }
+
+.active:hover h3 {
+	color: lightgreen;
+}
+
+h3 {
+	cursor: pointer;
+}
+
+h3:hover {
+	color: pink;
+}
+
+#timer {
+	flex-direction: column;
+}
+
+.section {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+}
+
