@@ -56,7 +56,7 @@ class Timer {
 		}, 1000);
 	}
 
-	stop() {
+	stop(man) {
 		if (this.timer != null) {
 			clearInterval(this.timer);
 		}
@@ -65,7 +65,7 @@ class Timer {
 		this.setMin(this.initMin);
 		this.setSec(this.initSec);
 		if (this.ended) {
-			this.ended();
+			this.ended(man);
 		}
 	}
 
@@ -205,12 +205,13 @@ class Timer {
 
 		running = false;
 
-		work.stop();
-		rest.stop();
+		work.stop(true);
+		rest.stop(true);
 	});
 
 	mute.addEventListener('click', function() {
 		notification.pause();
+		mute.disabled = true;
 	});
 
 	interval.addEventListener('change', function(e) {
@@ -268,10 +269,11 @@ class Timer {
 		}
 	}
 
-	function ended() {
-		console.log('')
+	function ended(man) {
 		mute.disabled = false;
-		notification.play();
+		if (!man) {
+			notification.play();
+		}
 		if (autoplay.checked) {
 			if (!running) {
 				return;
@@ -284,14 +286,17 @@ class Timer {
 			}
 		} else {
 			notification.loop = true;
-			confirm(`${working ? 'Work' : 'Rest'} timer ended.`);
+			if (!man) {
+				confirm(`${working ? 'Work' : 'Rest'} timer ended.`);
+			}
 			notification.pause();
+			notification.loop = false;
 
 			start.disabled = !start.disabled;
 			cancel.disabled = !cancel.disabled;
+			mute.disabled = true;
 		}
 
-		mute.disabled = true;
 		toggleWorking();
 	}
 
